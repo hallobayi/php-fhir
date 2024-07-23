@@ -82,6 +82,9 @@ if (!trait_exists('<?php echo $config->getFullyQualifiedName(true, PHPFHIR_TRAIT
 if (!trait_exists('<?php echo $config->getFullyQualifiedName(true, PHPFHIR_TRAIT_SOURCE_XMLNS); ?>', false)) {
     require __DIR__ . DIRECTORY_SEPARATOR . '<?php echo PHPFHIR_TRAIT_SOURCE_XMLNS; ?>.php';
 }
+if (!trait_exists('<?php echo $config->getFullyQualifiedName(true, PHPFHIR_TRAIT_EXTRA_FIELDS); ?>', false)) {
+    require __DIR__ . DIRECTORY_SEPARATOR . '<?php echo PHPFHIR_TRAIT_EXTRA_FIELDS; ?>.php';
+}
 
 // enums
 if (!enum_exists('<?php echo $config->getFullyQualifiedName(true, PHPFHIR_ENUM_TYPE); ?>', false)) {
