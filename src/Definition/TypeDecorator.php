@@ -318,6 +318,12 @@ abstract class TypeDecorator
             return;
         }
 
+        // special block for "extra" types
+        if (PHPFHIR_EXTRA_PRIMITVE_TYPE === $type->getFHIRName()) {
+            $logger->debug(sprintf('Setting Type "%s" kind to itself ("%s")', $type->getFHIRName(), TypeKind::PRIMITIVE->value));
+            self::setTypeKind($config, $types, $type, TypeKind::PRIMITIVE);
+        }
+
         // otherwise, set kind to that of its parent
         $logger->debug(sprintf('Setting Type "%s" kind to it parent ("%s")', $type->getFHIRName(), $rootType->getKind()->value));
         self::setTypeKind($config, $types, $type, $rootType->getKind());

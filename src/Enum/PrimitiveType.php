@@ -48,6 +48,8 @@ enum PrimitiveType:string
     case MARKDOWN = 'markdown';
     case SAMPLE_DATA_TYPE = 'SampledDataDataType';
 
+    case PHPFHIR_EXTRA = 'phpfhirExtra';
+
     /**
      * @return string
      */
@@ -84,6 +86,9 @@ enum PrimitiveType:string
             case PrimitiveType::MARKDOWN: // TODO: markdown lib, maybe?
             case PrimitiveType::UNSIGNED_INTEGER: // TODO: utilize big number lib, maybe?
                 return 'string';
+
+            case PrimitiveType::PHPFHIR_EXTRA:
+                return 'mixed';
 
             default:
                 throw new \DomainException(sprintf('No PHP value type case for "%s"', $this->value));

@@ -16,32 +16,43 @@
  * limitations under the License.
  */
 
-use DCarbone\PHPFHIR\Utilities\CopyrightUtils;
+use DCarbone\PHPFHIR\Utilities\NameUtils;
 
 /** @var \DCarbone\PHPFHIR\Config\VersionConfig $config */
 /** @var \DCarbone\PHPFHIR\Definition\Types $types */
+/** @var \DCarbone\PHPFHIR\Definition\Type $type */
 
-$namespace = $config->getFullyQualifiedName(false);
+$fqns = $type->getFullyQualifiedNamespace(true);
+$classDocumentation = $type->getDocBlockDocumentationFragment(1, true);
+$namespace = trim($fqns, PHPFHIR_NAMESPACE_TRIM_CUTSET);
+$xmlName = NameUtils::getTypeXMLElementName($type);
 
 ob_start();
 
-echo "<?php declare(strict_types=1);\n\n";
+// build file header
+echo require_with(
+    PHPFHIR_TEMPLATE_FILE_DIR . DIRECTORY_SEPARATOR . 'header_type.php',
+    [
+        'config' => $config,
+        'fqns' => $fqns,
+        'skipImports' => false,
+        'type' => $type,
+        'types' => $types,
+    ]
+);
 
-if ('' !== $namespace) :
-    echo "namespace {$namespace};\n\n";
-endif;
+// build class header ?>
+/**<?php if ('' !== $classDocumentation) : ?>
 
-echo CopyrightUtils::getFullPHPFHIRCopyrightComment();
+<?php echo $classDocumentation; ?>
+ *<?php endif; ?>
 
-echo "\n\n"; ?>
-/**
- * Class <?php echo PHPFHIR_CLASSNAME_EXTRA_PRIMITIVE; if ('' !== $namespace) : ?>
+ * Class <?php echo $type->getClassName(); ?>
 
- * @package \<?php echo $namespace; ?>
-<?php endif; ?>
+ * @package <?php echo $fqns; ?>
 
  */
-final class <?php echo PHPFHIR_CLASSNAME_EXTRA_PRIMITIVE; ?>
+class <?php echo $type->getClassName(); ?>
 
 {
     /** @var string */
@@ -91,8 +102,61 @@ final class <?php echo PHPFHIR_CLASSNAME_EXTRA_PRIMITIVE; ?>
      */
     public function setValue(null|string|bool|int|float $value): self
     {
+        $this->_trackValueSet($this->_value ?? null, $value);
         $this->_value = $value;
         return $this;
+    }
+
+    /**
+     * @return \stdClass
+     */
+    public function jsonSerialize(): \stdClass
+    {
+        $out = new \stdClass();
+        $out->{$this->getName()} = $this->getValue();
+        return $out;
+    }
+
+<?php
+// unserialize portion
+echo require_with(
+        PHPFHIR_TEMPLATE_TYPES_SERIALIZATION_DIR . DIRECTORY_SEPARATOR . 'xml' . DIRECTORY_SEPARATOR . 'unserialize' . DIRECTORY_SEPARATOR . 'header.php',
+    [
+        'config' => $config,
+        'type' => $type,
+        'typeKind' => $type->getKind(),
+        'parentType' => null,
+        'typeClassName' => $type->getClassName()
+    ]
+);
+?>
+        $type->setValue((string)$element);
+        return $type;
+    }
+
+<?php echo require_with(
+    PHPFHIR_TEMPLATE_TYPES_SERIALIZATION_DIR . DIRECTORY_SEPARATOR . 'xml' . DIRECTORY_SEPARATOR . 'serialize' . DIRECTORY_SEPARATOR . 'header.php',
+    [
+        'config' => $config,
+        'type' => $type,
+    ]
+); ?>
+        $xw->writeAttribute($this->getName(), $this->getValue());
+        if (isset($rootOpened) && $rootOpened) {
+            $xw->endElement();
+        }
+        if (isset($docStarted) && $docStarted) {
+            $xw->endDocument();
+        }
+        return $xw;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function jsonSerialize(): mixed
+    {
+        return $this->value;
     }
 
     /**

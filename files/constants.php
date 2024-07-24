@@ -33,15 +33,15 @@ const PHPFHIR_NAMESPACE_REGEX = '{^[a-zA-Z][a-zA-Z0-9_]*(\\\[a-zA-Z0-9_]+)*[a-zA
 const PHPFHIR_PRIMITIVE_SUFFIX = '-primitive';
 const PHPFHIR_LIST_SUFFIX = '-list';
 
-// html property
+// xhtml type
 const PHPFHIR_XHTML_DIV = 'xhtml:div';
-
-// raw type
 const PHPFHIR_XHTML_TYPE_NAME = 'Xhtml';
 const PHPFHIR_XHTML_TYPE_DESCRIPTION = 'XHTML type used in special cases';
 
-// FHIR XML NS
-const PHPFHIR_FHIR_XMLNS = 'https://hl7.org/fhir';
+// "extra" types
+const PHPFHIR_EXTRA_PRIMITVE_TYPE = 'phpfhirExtra-primitive';
+const PHPFHIR_EXTRA_PRIMITIVE_TYPE_DESCRIPTION = 'Denotes an out-of-band primitive field';
+const PHPFHIR_EXTRA_COMPLEX_TYPE = 'PHPFHIRExtraComplex';
 
 // XSDs
 const PHPFHIR_SKIP_XML_XSD = 'xml.xsd';

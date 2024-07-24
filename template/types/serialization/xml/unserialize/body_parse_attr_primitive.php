@@ -23,5 +23,6 @@ $propType = $property->getValueFHIRType();
 ob_start(); ?>
         if (isset($attributes[self::<?php echo $property->getFieldConstantName(); ?>])) {
             $type->setValue((string)$attributes[self::<?php echo $property->getFieldConstantName(); ?>], <?php echo PHPFHIR_ENUM_XML_LOCATION_ENUM; ?>::ATTRIBUTE);
+            unset($attributes[self::<?php echo $property->getFieldConstantName(); ?>]);
         }
 <?php return ob_get_clean();

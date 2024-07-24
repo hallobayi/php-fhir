@@ -39,6 +39,7 @@ if ($propertyType->hasPrimitiveParent() || $propertyType->getKind()->isOneOf(Typ
                 $type-><?php echo $setter; ?>((string)$attributes[self::<?php echo $propertyConst; ?>], <?php echo PHPFHIR_ENUM_XML_LOCATION_ENUM; ?>::ATTRIBUTE);
             }
 <?php endif; ?>
+            unset($attributes[self::<?php echo $propertyConst; ?>]);
         }
 <?php endif;
 return ob_get_clean();

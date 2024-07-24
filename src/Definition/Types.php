@@ -22,6 +22,7 @@ use ArrayIterator;
 use Countable;
 use DCarbone\PHPFHIR\Config\Version;
 use DCarbone\PHPFHIR\Config\VersionConfig;
+use DCarbone\PHPFHIR\Enum\PrimitiveType;
 use DCarbone\PHPFHIR\Enum\TypeKind;
 
 /**
@@ -56,13 +57,25 @@ class Types implements Countable
     {
         $this->config = $config;
 
-        // construct and add "XHTML" type
         // TODO(dcarbone): this sucks.
-        $xt = new Type($config, PHPFHIR_XHTML_TYPE_NAME);
-        $xt->setKind(TypeKind::PHPFHIR_XHTML);
-        $xt->addDocumentationFragment(PHPFHIR_XHTML_TYPE_DESCRIPTION);
 
-        $this->addType($xt);
+        // construct and add "XHTML" type
+        {
+            $t = new Type($config, PHPFHIR_XHTML_TYPE_NAME);
+            $t->setKind(TypeKind::PHPFHIR_XHTML);
+            $t->addDocumentationFragment(PHPFHIR_XHTML_TYPE_DESCRIPTION);
+
+            $this->addType($t);
+        }
+
+        // construct and add "extra primitive" type
+        {
+            $t = new Type($config, PHPFHIR_EXTRA_PRIMITVE_TYPE);
+
+            $t->addDocumentationFragment(PHPFHIR_EXTRA_PRIMITIVE_TYPE_DESCRIPTION);
+
+            $this->addType($t);
+        }
     }
 
     /**
