@@ -40,13 +40,18 @@ ob_start(); ?>
         if (null === $data || [] === $data) {
             return;
         }
+        self::_actualConstruct($data, true);
+    }
+
+    protected function _actualConstruct(null|array<?php if ($type->isValueContainer()) : ?>|<?php echo TypeHintUtils::propertySetterTypeHint($config, $valueProperty, false); endif; ?> $data, bool $parseExtra): void
+    {
 <?php if ($type->isValueContainer()) : ?>
         if (!is_array($data)) {
             $this->setValue($data);
             return;
         }
 <?php endif; if ($type->hasParentWithLocalProperties()) : // add parent constructor call ?>
-        parent::__construct($data);<?php endif; ?><?php if ($type->isCommentContainer() && !$type->hasCommentContainerParent()) : // only parse comments if parent isn't already doing it. ?>
+        parent::_actualConstruct($data, false);<?php endif; ?><?php if ($type->isCommentContainer() && !$type->hasCommentContainerParent()) : // only parse comments if parent isn't already doing it. ?>
 
         if (isset($data[PHPFHIRConstants::JSON_FIELD_FHIR_COMMENTS])) {
             if (is_array($data[PHPFHIRConstants::JSON_FIELD_FHIR_COMMENTS])) {
@@ -80,5 +85,8 @@ ob_start(); ?>
         );
     endif;
 endforeach; ?>
+        if ($parseExtra) {
+            $this->_parseExtraFieldsFromArray($data);
+        }
     }
 <?php return ob_get_clean();

@@ -46,6 +46,7 @@ ob_start(); ?>
                 $this-><?php echo $setter; ?>(new <?php echo $propertyTypeClassName; ?>($data[self::<?php echo $propertyFieldConst; ?>]));
             }
 <?php endif; ?>
+            unset($data[self::<?php echo $propertyFieldConst; ?>]);
         }
 <?php
 return ob_get_clean(); ?>

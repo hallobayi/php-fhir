@@ -131,6 +131,7 @@ abstract class TypeHintUtils
     /**
      * @param \DCarbone\PHPFHIR\Config\VersionConfig $config
      * @param \DCarbone\PHPFHIR\Definition\Type $type
+     * @param bool $nullable
      * @return string
      */
     public static function typeSetterTypeHint(VersionConfig $config, Type $type, bool $nullable): string
@@ -170,13 +171,9 @@ abstract class TypeHintUtils
         // fetch type's kind
         $tk = $type->getKind();
 
-        // if this is an inline resource
+        // check for inline resource
         if ($tk->isOneOf(TypeKind::RESOURCE_INLINE, TypeKind::RESOURCE_CONTAINER)) {
-            array_push(
-                $types,
-                sprintf('\\%s\\', trim($config->getFullyQualifiedName(true), '\\')),
-                PHPFHIR_INTERFACE_CONTAINED_TYPE,
-            );
+            $types[] = $config->getFullyQualifiedName(true, PHPFHIR_INTERFACE_CONTAINED_TYPE);
         } else {
             $types[] = $type->getFullyQualifiedClassName(true);
         }

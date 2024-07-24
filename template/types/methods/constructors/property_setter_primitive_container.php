@@ -62,6 +62,7 @@ ob_start(); ?>
             } else {
                 $this-><?php echo $setter; ?>(new <?php echo $propertyTypeClassName; ?>(null));
             }
+            unset($data[self::<?php echo $propertyFieldConst; ?>]);
         }
 <?php
 return ob_get_clean(); ?>

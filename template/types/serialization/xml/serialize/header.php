@@ -16,12 +16,10 @@
  * limitations under the License.
  */
 
-use DCarbone\PHPFHIR\Enum\TypeKind;
 use DCarbone\PHPFHIR\Utilities\NameUtils;
 
 /** @var \DCarbone\PHPFHIR\Config\VersionConfig $config */
 /** @var \DCarbone\PHPFHIR\Definition\Type $type */
-/** @var \DCarbone\PHPFHIR\Definition\Type $parentType */
 
 $namespace = $config->getFullyQualifiedName(false);
 $typeKind = $type->getKind();

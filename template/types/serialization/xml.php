@@ -78,7 +78,6 @@ if ($typeKind->isOneOf(TypeKind::RESOURCE_CONTAINER, TypeKind::RESOURCE_INLINE))
         [
             'config' => $config,
             'type' => $type,
-            'parentType' => $parentType,
         ]
     );
 

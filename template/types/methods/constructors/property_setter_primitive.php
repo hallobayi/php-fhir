@@ -43,6 +43,7 @@ ob_start(); ?>
                 $this-><?php echo $setter; ?>(new <?php echo $property->getValueFHIRType()->getClassName(); ?>($data[self::<?php echo $propertyFieldConst; ?>]));
             }
 <?php endif; ?>
+            unset($data[self::<?php echo $propertyFieldConst; ?>]);
         }
 <?php
 return ob_get_clean();

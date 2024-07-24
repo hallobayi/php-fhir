@@ -198,34 +198,14 @@ echo require_with(
         return $type;
     }
 
-    /**
-     * @param null|<?php echo $config->getFullyQualifiedName(true, PHPFHIR_CLASSNAME_XML_WRITER); ?> $xw
-     * @param null|int|\<?php echo ('' === $namespace ? '' : "{$namespace}\\") . PHPFHIR_CLASSNAME_CONFIG; ?> $config XML serialization config.  Supports an integer value interpreted as libxml opts for backwards compatibility.
-     * @return <?php echo $config->getFullyQualifiedName(true, PHPFHIR_CLASSNAME_XML_WRITER); ?>
+<?php echo require_with(
+    PHPFHIR_TEMPLATE_TYPES_SERIALIZATION_DIR . DIRECTORY_SEPARATOR . 'xml' . DIRECTORY_SEPARATOR . 'serialize' . DIRECTORY_SEPARATOR . 'header.php',
+    [
+        'config' => $config,
+        'type' => $type,
+    ]
+); ?>
 
-     */
-    public function xmlSerialize(null|<?php echo PHPFHIR_CLASSNAME_XML_WRITER; ?> $xw = null, null|int|<?php echo PHPFHIR_CLASSNAME_CONFIG ?> $config = null): <?php echo PHPFHIR_CLASSNAME_XML_WRITER; ?>
-
-    {
-        if (is_int($config)) {
-            $config = new <?php echo PHPFHIR_CLASSNAME_CONFIG; ?>([<?php echo PHPFHIR_ENUM_CONFIG_KEY; ?>::LIBXML_OPTS->value => $config]);
-        } else if (null === $config) {
-            $config = new <?php echo PHPFHIR_CLASSNAME_CONFIG; ?>();
-        }
-        if (null === $xw) {
-            $xw = new <?php echo PHPFHIR_CLASSNAME_XML_WRITER; ?>();
-        }
-        if (!$xw->isOpen()) {
-            $xw->openMemory();
-        }
-        if (!$xw->isDocStarted()) {
-            $docStarted = true;
-            $xw->startDocument();
-        }
-        if (!$xw->isRootOpen()) {
-            $rootOpened = true;
-            $xw->openRootNode($config, 'Xhtml', $this->_getSourceXmlns());
-        }
         $xr = $this->getXMLReader($config);
         if (null === $xr) {
             return $xw;
@@ -262,4 +242,5 @@ echo require_with(
     {
         return (string)$this->getXhtml();
     }
-}<?php return ob_get_clean();
+}
+<?php return ob_get_clean();

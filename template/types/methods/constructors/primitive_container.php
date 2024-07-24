@@ -30,7 +30,6 @@ if (null === $valueProperty) {
 }
 
 $valuePropertyType = $valueProperty->getValueFHIRType();
-$valuePropertyPrimitiveType = $valuePropertyType->getPrimitiveType();
 
 $typeImports = $type->getImports();
 
@@ -44,12 +43,21 @@ ob_start(); ?>
         if (null === $data) {
             return;
         }
+        self::_actualConstruct($data, true);
+    }
+
+    /**
+     * @param <?php echo TypeHintUtils::typeSetterTypeHint($config, $valuePropertyType, true); ?>|<?php echo $valuePropertyType->getClassName(); ?>|array $data
+     * @param bool $parseExtra
+     */
+    protected function _actualConstruct(<?php echo TypeHintUtils::propertySetterTypeHint($config, $valueProperty, true); ?>|array $data, bool $parseExtra): void
+    {
         if (is_scalar($data) || $data instanceof <?php echo $typeImports->getImportByType($valuePropertyType); ?>) {
             $this->setValue($data);
             return;
         }<?php if ($parentType) : ?>
 
-        parent::__construct($data);
+        parent::_construct($data, false);
 <?php endif; ?><?php if (!$type->hasCommentContainerParent() && $type->isCommentContainer()) : ?>
 
         if (isset($data[PHPFHIRConstants::JSON_FIELD_FHIR_COMMENTS])) {
@@ -72,5 +80,8 @@ ob_start(); ?>
             ]
     );
 endforeach; ?>
+        if ($parseExtra) {
+            $this->_parseExtraFieldsFromArray($data);
+        }
     }
 <?php return ob_get_clean();

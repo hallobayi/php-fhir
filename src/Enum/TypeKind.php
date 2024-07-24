@@ -46,6 +46,8 @@ enum TypeKind: string
 
     // treated a bit different
     case PHPFHIR_XHTML = 'phpfhir_xhtml';
+    case PHPFHIR_EXTRA_PRIMITIVE = 'phpfhir_extra_primitive';
+    case PHPFHIR_EXTRA_COMPLEX = 'phpfhir_extra_complex';
 
     private const VERSION_ROOT_KIND_MAP = [
         // DSTU1 has everything stem from "Element", lots of weird logic around this.

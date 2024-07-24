@@ -35,36 +35,72 @@ echo CopyrightUtils::getFullPHPFHIRCopyrightComment();
 
 echo "\n\n"; ?>
 /**
- * Class <?php echo PHPFHIR_CLASSNAME_EXTRA_FIELD; if ('' !== $namespace) : ?>
+ * Class <?php echo PHPFHIR_CLASSNAME_EXTRA_PRIMITIVE; if ('' !== $namespace) : ?>
 
  * @package \<?php echo $namespace; ?>
 <?php endif; ?>
 
  */
-final class <?php echo PHPFHIR_CLASSNAME_EXTRA_FIELD; ?> implements \JsonSerializable
+final class <?php echo PHPFHIR_CLASSNAME_EXTRA_PRIMITIVE; ?>
+
 {
     /** @var string */
     private string $_name;
-    /** @var mixed */
-    private mixed $_value;
-    /** @var <?php echo $config->getFullyQualifiedName(true, PHPFHIR_ENUM_XML_LOCATION_ENUM); ?> */
-    private <?php echo PHPFHIR_ENUM_XML_LOCATION_ENUM; ?> $_xmlLoc;
+    /** @var null|string|bool|int|float $_value */
+    private null|string|bool|int|float $_value;
 
-    public function __construct(string $name, mixed $value, <?php echo PHPFHIR_ENUM_XML_LOCATION_ENUM; ?> $xmlLoc = <?php echo PHPFHIR_ENUM_XML_LOCATION_ENUM; ?>::ATTRIBUTE)
+    /**
+     * @param string $name
+     * @param null|string|bool|int|float $value
+     */
+    public function __construct(string $name, null|string|bool|int|float $value)
     {
         $this->_name = $name;
         $this->_value = $value;
-        $this->_xmlLoc = $xmlLoc;
     }
 
+    /**
+     * @return string
+     */
     public function getName(): string
     {
-        return $this->_name;
+        return $this->_name ?? '';
     }
 
-    public function getValue(): mixed
+    /**
+     * @param string $name
+     * @return self
+     */
+    public function setName(string $name): self
     {
-        return $this->_value;
+        $this->_name = $name;
+        return $this;
+    }
+
+    /**
+     * @return null|string|bool|int|float
+     */
+    public function getValue(): null|string|bool|int|float
+    {
+        return $this->_value ?? null;
+    }
+
+    /**
+     * @param null|string|bool|int|float $value
+     * @return self
+     */
+    public function setValue(null|string|bool|int|float $value): self
+    {
+        $this->_value = $value;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return (string)$this->getValue();
     }
 }
 <?php return ob_get_clean();

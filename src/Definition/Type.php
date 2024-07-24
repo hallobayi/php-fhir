@@ -745,6 +745,10 @@ class Type
         if (null === $parentType) {
             // if this type has no parent(s), try to add all traits
 
+            // add extra fields trait
+            $traits[] = PHPFHIR_TRAIT_EXTRA_FIELDS;
+
+            // if this thing can hold comments
             if ($this->isCommentContainer()) {
                 $traits[] = PHPFHIR_TRAIT_COMMENT_CONTAINER;
             }

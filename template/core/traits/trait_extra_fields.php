@@ -58,7 +58,7 @@ trait <?php echo PHPFHIR_TRAIT_EXTRA_FIELDS; ?>
 
     public function _getExtraField(string $name): mixed
     {
-        if (array_key_exists($this->_extraFields, $name)) {
+        if (array_key_exists($name, $this->_extraFields)) {
             return $this->_extraFields[$name];
         }
         trigger_error(sprintf('Warning: Undefined property: %s::$%s', get_called_class(), $name));
@@ -68,6 +68,22 @@ trait <?php echo PHPFHIR_TRAIT_EXTRA_FIELDS; ?>
     public function _getExtraFieldNames(): array
     {
         return array_keys($this->_extraFields);
+    }
+
+    public function _getExtraFields(): array
+    {
+        return $this->_extraFields;
+    }
+
+    protected function _parseExtraFieldsFromArray(array $extra): void
+    {
+        foreach($extra as $name => $value) {
+            if (null === $value || is_scalar($value)) {
+                $this->_extraFields[$name] = new <?php echo PHPFHIR_CLASSNAME_EXTRA_PRIMITIVE; ?>($name, $value);
+            } else {
+                $this->_extraFields[$name] = new <?php echo PHPFHIR_CLASSNAME_EXTRA_COMPLEX; ?>($name, $value);
+            }
+        }
     }
 }
 <?php return ob_get_clean();
