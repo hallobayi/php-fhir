@@ -20,10 +20,6 @@
 /** @var \DCarbone\PHPFHIR\Definition\Type $type */
 /** @var \DCarbone\PHPFHIR\Definition\Property[] $properties */
 
-$requireArgs = [
-    'config' => $config,
-];
-
 ob_start(); ?>
         foreach ($element->children() as $n) {
             $childName = $n->getName();
@@ -31,7 +27,8 @@ ob_start(); ?>
     if (null !== $property->getValueFHIRType()) {
         echo require_with(
             __DIR__ . DIRECTORY_SEPARATOR . 'body_parse_node_typed.php',
-            $requireArgs + [
+            [
+                'config' => $config,
                 'property' => $property,
                 'i' => $i,
             ]
@@ -39,7 +36,8 @@ ob_start(); ?>
     } else {
         echo require_with(
             __DIR__ . DIRECTORY_SEPARATOR . 'body_parse_node_primitive.php',
-            $requireArgs + [
+            [
+                'config' => $config,
                 'property' => $property,
                 'i' => $i,
             ]
@@ -53,7 +51,8 @@ ob_start(); ?>
     if (null !== $property->getValueFHIRType()) {
         echo require_with(
             __DIR__ . DIRECTORY_SEPARATOR . 'body_parse_attr_typed.php',
-            $requireArgs + [
+            [
+                'config' => $config,
                 'property' => $property,
                 'i' => $i,
             ]
@@ -61,7 +60,8 @@ ob_start(); ?>
     } else {
         echo require_with(
             __DIR__ . DIRECTORY_SEPARATOR . 'body_parse_attr_primitive.php',
-            $requireArgs + [
+            [
+                'config' => $config,
                 'property' => $property,
                 'i' => $i,
             ]

@@ -57,6 +57,28 @@ abstract class Templates
      * @param \DCarbone\PHPFHIR\Definition\Type $type
      * @return string
      */
+    public static function renderExtraPrimitiveTypeClass(VersionConfig $config, Types $types, Type $type): string
+    {
+        return require PHPFHIR_TEMPLATE_TYPES_DIR . DIRECTORY_SEPARATOR . 'class_extra_primitive.php';
+    }
+
+    /**
+     * @param \DCarbone\PHPFHIR\Config\VersionConfig $config
+     * @param \DCarbone\PHPFHIR\Definition\Types $types
+     * @param \DCarbone\PHPFHIR\Definition\Type $type
+     * @return string
+     */
+    public static function renderExtraComplexTypeclas(VersionConfig $config, Types $types, Type $type): string
+    {
+        return require PHPFHIR_TEMPLATE_TYPES_DIR . DIRECTORY_SEPARATOR . 'class_extra_complex.php';
+    }
+
+    /**
+     * @param \DCarbone\PHPFHIR\Config\VersionConfig $config
+     * @param \DCarbone\PHPFHIR\Definition\Types $types
+     * @param \DCarbone\PHPFHIR\Definition\Type $type
+     * @return string
+     */
     public static function renderFhirTypeClass(VersionConfig $config, Types $types, Type $type): string
     {
         return require PHPFHIR_TEMPLATE_TYPES_DIR . DIRECTORY_SEPARATOR . 'class_default.php';

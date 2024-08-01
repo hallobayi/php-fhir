@@ -39,9 +39,10 @@ const PHPFHIR_XHTML_TYPE_NAME = 'Xhtml';
 const PHPFHIR_XHTML_TYPE_DESCRIPTION = 'XHTML type used in special cases';
 
 // "extra" types
-const PHPFHIR_EXTRA_PRIMITVE_TYPE = 'phpfhirExtra-primitive';
+const PHPFHIR_EXTRA_PRIMITVE_TYPE = 'ExtraField-primitive';
 const PHPFHIR_EXTRA_PRIMITIVE_TYPE_DESCRIPTION = 'Denotes an out-of-band primitive field';
-const PHPFHIR_EXTRA_COMPLEX_TYPE = 'PHPFHIRExtraComplex';
+const PHPFHIR_EXTRA_COMPLEX_TYPE = 'ExtraFieldComplex';
+const PHPFHIR_EXTRA_COMPLEX_TYPE_DESCRIPTION = 'Denotes an out-of-band complex field';
 
 // XSDs
 const PHPFHIR_SKIP_XML_XSD = 'xml.xsd';
@@ -86,8 +87,6 @@ const PHPFHIR_CLASSNAME_TYPEMAP = 'PHPFHIRTypeMap';
 const PHPFHIR_CLASSNAME_DEBUG_CLIENT = 'PHPFHIRDebugClient';
 const PHPFHIR_CLASSNAME_DEBUG_CLIENT_RESPONSE = 'PHPFHIRDebugClientResponse';
 const PHPFHIR_CLASSNAME_XML_WRITER = 'PHPFHIRXmlWriter';
-const PHPFHIR_CLASSNAME_EXTRA_PRIMITIVE = 'PHPFHIRExtraPrimitive';
-const PHPFHIR_CLASSNAME_EXTRA_COMPLEX = 'PHPFHIRExtraComplex';
 
 // Core interface names
 const PHPFHIR_INTERFACE_TYPE = 'PHPFHIRTypeInterface';

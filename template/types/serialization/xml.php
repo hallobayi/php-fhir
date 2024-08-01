@@ -21,6 +21,7 @@ use DCarbone\PHPFHIR\Utilities\NameUtils;
 
 /** @var \DCarbone\PHPFHIR\Config\VersionConfig $config */
 /** @var \DCarbone\PHPFHIR\Definition\Type $type */
+/** @var \DCarbone\PHPFHIR\Definition\Types $types */
 /** @var \DCarbone\PHPFHIR\Enum\TypeKind $typeKind */
 /** @var \DCarbone\PHPFHIR\Definition\Type $parentType */
 /** @var string $typeClassName */
@@ -87,6 +88,7 @@ if ($typeKind->isOneOf(TypeKind::RESOURCE_CONTAINER, TypeKind::RESOURCE_INLINE))
             [
                 'config' => $config,
                 'type' => $type,
+                'types' => $types,
                 'parentType' => $parentType,
                 'localProperties' => $localProperties,
             ]

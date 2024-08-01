@@ -80,6 +80,11 @@ if ($type->isCommentContainer() && !$type->hasCommentContainerParent()) : ?>
         $out->{<?php echo PHPFHIR_CLASSNAME_CONSTANTS; ?>::JSON_FIELD_RESOURCE_TYPE} = $this->_getResourceType();
 
 <?php endif; ?>
+
+        foreach($this->_getExtraFields() as $k => $ef) {
+            $out->{$k} = $ef;
+        }
+
         return $out;
     }
 <?php return ob_get_clean();

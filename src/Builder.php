@@ -113,11 +113,13 @@ class Builder
             $log->debug("Generating class for type {$type}...");
 
             // TODO(@dcarbone): revisit with template system refactor
-            if (PHPFHIR_XHTML_TYPE_NAME === $type->getFHIRName()) {
-                $classDefinition = Templates::renderXhtmlTypeClass($this->config, $types, $type);
-            } else {
-                $classDefinition = Templates::renderFhirTypeClass($this->config, $types, $type);
-            }
+            $classDefinition = match ($type->getFHIRName()) {
+                PHPFHIR_XHTML_TYPE_NAME => Templates::renderXhtmlTypeClass($this->config, $types, $type),
+                PHPFHIR_EXTRA_PRIMITVE_TYPE => Templates::renderExtraPrimitiveTypeClass($this->config, $types, $type),
+                PHPFHIR_EXTRA_COMPLEX_TYPE => Templates::renderExtraComplexTypeclas($this->config, $types, $type),
+                default => Templates::renderFhirTypeClass($this->config, $types, $type),
+            };
+
             $filepath = FileUtils::buildTypeFilePath($this->config, $type);
             if (!file_put_contents($filepath, $classDefinition)) {
                 throw new \RuntimeException(

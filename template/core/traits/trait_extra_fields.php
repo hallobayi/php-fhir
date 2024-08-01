@@ -19,6 +19,8 @@
 use DCarbone\PHPFHIR\Utilities\CopyrightUtils;
 
 /** @var \DCarbone\PHPFHIR\Config\VersionConfig $config */
+/** @var \DCarbone\PHPFHIR\Definition\Types $types */
+
 
 $rootNS = $config->getFullyQualifiedName(false);
 
@@ -79,9 +81,9 @@ trait <?php echo PHPFHIR_TRAIT_EXTRA_FIELDS; ?>
     {
         foreach($extra as $name => $value) {
             if (null === $value || is_scalar($value)) {
-                $this->_extraFields[$name] = new <?php echo PHPFHIR_CLASSNAME_EXTRA_PRIMITIVE; ?>($name, $value);
+                $this->_extraFields[$name] = new <?php echo $types->getTypeByName(PHPFHIR_EXTRA_PRIMITVE_TYPE)->getClassName(); ?>($name, $value);
             } else {
-                $this->_extraFields[$name] = new <?php echo PHPFHIR_CLASSNAME_EXTRA_COMPLEX; ?>($name, $value);
+                $this->_extraFields[$name] = new <?php echo $types->getTypeByName(PHPFHIR_EXTRA_COMPLEX_TYPE)->getClassName(); ?>($name, $value);
             }
         }
     }

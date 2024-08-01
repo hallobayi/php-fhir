@@ -64,16 +64,15 @@ ob_start(); ?>
             $type->_setSourceXmlns((string)$ns);
         }
 
-        return self::_doXmlUnserialize($type, $config, true);
+        return self::_doXmlUnserialize($element, $type, $config, true);
     }
 
     /**
      * @param \SimpleXMLElement $element
      * @param <?php echo $type->getFullyQualifiedClassName(true); ?> $type
      * @param <?php echo $config->getFullyQualifiedName(true, PHPFHIR_CLASSNAME_CONFIG); ?> $config
-     * @return <?php echo $type->getFullyQualifiedClassName(true); ?>
-
+     * @return static
      */
-    protected static function _doXmlUnserialize(null|string|\SimpleXMLElement $element, null|<?php echo PHPFHIR_INTERFACE_TYPE; ?> $type, <?php echo PHPFHIR_CLASSNAME_CONFIG ?> $config, bool $parseExtra): self
+    protected static function _doXmlUnserialize(null|string|\SimpleXMLElement $element, null|<?php echo PHPFHIR_INTERFACE_TYPE; ?> $type, <?php echo PHPFHIR_CLASSNAME_CONFIG ?> $config, bool $parseExtra): static
     {
 <?php return ob_get_clean();

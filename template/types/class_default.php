@@ -177,6 +177,7 @@ if (0 < count($localProperties)) {
         [
             'config' => $config,
             'type'     => $type,
+            'types' => $types,
             'typeKind' => $typeKind,
             'parentType' => $parentType,
             'typeClassName' => $typeClassname,

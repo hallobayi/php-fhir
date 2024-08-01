@@ -22,10 +22,17 @@ use DCarbone\PHPFHIR\Enum\TypeKind;
 /** @var \DCarbone\PHPFHIR\Definition\Type $type */
 /** @var \DCarbone\PHPFHIR\Definition\Type|null $parentType */
 /** @var \DCarbone\PHPFHIR\Definition\Property[] $localProperties */
+/** @var \DCarbone\PHPFHIR\Definition\Types $types */
 
 ob_start();
 
-// first, marshal attribute values
+// first, marshal attribute values ?>
+        foreach($this->_getExtraFields() as $v) {
+            if ($v instanceof <?php echo $types->getTypeByName(PHPFHIR_EXTRA_PRIMITVE_TYPE)->getClassName(); ?>) {
+                $xw->writeAttribute($v->name, (string)$v->value);
+            }
+        }
+<?php
 
 foreach ($type->getLocalProperties()->localPropertiesOfTypeKinds(includeCollections: false, kinds: null) as $property) : ?>
         if (($this->_primitiveXmlLocations[self::FIELD_VALUE] ?? <?php echo PHPFHIR_ENUM_XML_LOCATION_ENUM; ?>::ATTRIBUTE) === <?php echo PHPFHIR_ENUM_XML_LOCATION_ENUM; ?>::ATTRIBUTE) {

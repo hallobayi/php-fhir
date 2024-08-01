@@ -71,9 +71,16 @@ class Types implements Countable
         // construct and add "extra primitive" type
         {
             $t = new Type($config, PHPFHIR_EXTRA_PRIMITVE_TYPE);
-
+            $t->setKind(TypeKind::PHPFHIR_EXTRA_PRIMITIVE);
             $t->addDocumentationFragment(PHPFHIR_EXTRA_PRIMITIVE_TYPE_DESCRIPTION);
+            $this->addType($t);
+        }
 
+        // construct and add "extra complex" type
+        {
+            $t = new Type($config, PHPFHIR_EXTRA_COMPLEX_TYPE);
+            $t->setKind(TypeKind::PHPFHIR_EXTRA_COMPLEX);
+            $t->addDocumentationFragment(PHPFHIR_EXTRA_COMPLEX_TYPE_DESCRIPTION);
             $this->addType($t);
         }
     }
