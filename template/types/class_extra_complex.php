@@ -25,7 +25,7 @@ use DCarbone\PHPFHIR\Utilities\NameUtils;
 $fqns = $type->getFullyQualifiedNamespace(true);
 $classDocumentation = $type->getDocBlockDocumentationFragment(1, true);
 $namespace = trim($fqns, PHPFHIR_NAMESPACE_TRIM_CUTSET);
-$xmlName = NameUtils::getTypeXMLElementName($type);
+$extraPrimitiveClassname = $types->getTypeByName(PHPFHIR_EXTRA_PRIMITVE_TYPE)->getClassName();
 
 ob_start();
 
@@ -53,51 +53,90 @@ echo require_with(
  */
 final class <?php echo $type->getClassName(); ?> implements \JsonSerializable
 {
-    public string $name;
-    public array $attributes;
-    public array $children;
+    private string $_name;
+    private array $_attributes = [];
+    private array $_children = [];
 
-    public function __construct(string $name, array $attributes = [], array $children = [])
+    public function __construct(string $name)
     {
-        $this->name = $name;
-        $this->attributes = $attributes;
-        $this->children = $children;
+        $this->_name = $name;
+    }
+
+    public static function fromArray(string $name, array $field): <?php echo $type->getClassName(); ?>
+
+    {
+        $type = new  <?php echo $type->getClassName(); ?>($name);
+        foreach($field as $k => $v) {
+            // null values must be skipped as their position in output is ambiguous
+            if (null === $v) {
+                continue;
+            }
+            if (is_scalar($v) || $v instanceof <?php echo $extraPrimitiveClassname; ?>) {
+                $type->addAttribute($k, $v);
+            } elseif (is_array($v) || $v instanceof \stdClass || $v instanceof <?php echo $type->getClassName(); ?>) {
+                $type->addChild($k, $v);
+            }
+        }
+        return $type;
     }
 
     public function getName(): string
     {
-        return $this->name;
+        return $this->_name;
     }
 
     public function getAttributes(): array
     {
-        return $this->attributes;
+        return $this->_attributes;
     }
 
-    public function addAttribute(string $k, mixed $v): self
+    public function addAttribute(string $k, null|string|bool|int|float $v): self
     {
-        $this->attributes[$k] = $v;
+        $this->_attributes[$k] = new <?php echo $extraPrimitiveClassname; ?>($k, $v);
         return $this;
     }
 
     public function getChildren(): array
     {
-        return $this->children;
+        return $this->_children;
     }
 
-    public function addChild(string $k, <?php echo $type->getClassName(); ?> $v): self
+    public function addChild(string $k, null|array|\stdClass|<?php echo $type->getClassName(); ?> $child): self
     {
-        $this->children[$k] = $v;
+        if (null === $child || $child instanceof <?php echo $type->getClassName(); ?>) {
+            $this->_children[$k] = $child;
+            return $this;
+        }
+        if ($child instanceof \stdClass) {
+            $child = (array)$child;
+        }
+        foreach($child as $field => $value) {
+            if (is_scalar($value)) {
+                $this->_children[$field] = new <?php echo $extraPrimitiveClassname; ?>($field, $value);
+            } else {
+                if ($value instanceof \stdClass) {
+                    $value = (array)$value;
+                }
+                if (is_array($value) && is_int(key($value))) {
+                    $this->_children[$field] = [];
+                    foreach($value as $k => $v) {
+                        $this->_children[$field][] = <?php echo $type->getClassName(); ?>::fromArray($k, $v);
+                    }
+                } else {
+                    $this->_children[$field] = <?php echo $type->getClassName(); ?>::fromArray($field, $value);
+                }
+            }
+        }
         return $this;
     }
 
     public function jsonSerialize(): \stdClass
     {
         $out = new \stdClass();
-        foreach($this->attributes as $k => $v) {
+        foreach($this->_attributes as $k => $v) {
             $out->{$k} = $v;
         }
-        foreach($this->children as $k => $v) {
+        foreach($this->_children as $k => $v) {
             $out->{$k} = $v;
         }
         return $out;

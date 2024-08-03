@@ -31,6 +31,9 @@ if ('' !== $rootNS) :
     echo "namespace {$rootNS};\n\n";
 endif;
 
+$extraPrimitiveClassname = $types->getTypeByName(PHPFHIR_EXTRA_PRIMITVE_TYPE)->getClassName();
+$extraComplexClassname = $types->getTypeByName(PHPFHIR_EXTRA_COMPLEX_TYPE)->getClassName();
+
 echo CopyrightUtils::getFullPHPFHIRCopyrightComment();
 
 echo "\n\n";
@@ -53,12 +56,12 @@ trait <?php echo PHPFHIR_TRAIT_EXTRA_FIELDS; ?>
         return [] !== $this->_extraFields;
     }
 
-    public function _setExtraField(string $name, mixed $value): void
+    public function _setExtraField(string $name, <?php echo $extraPrimitiveClassname; ?>|<?php echo $extraComplexClassname; ?> $field): void
     {
-        $this->_extraFields[$name] = $value;
+        $this->_extraFields[$name] = $field;
     }
 
-    public function _getExtraField(string $name): mixed
+    public function _getExtraField(string $name): <?php echo $extraPrimitiveClassname; ?>|<?php echo $extraComplexClassname; ?>
     {
         if (array_key_exists($name, $this->_extraFields)) {
             return $this->_extraFields[$name];
@@ -80,16 +83,22 @@ trait <?php echo PHPFHIR_TRAIT_EXTRA_FIELDS; ?>
     protected function _parseExtraFieldsFromArray(array $extra): void
     {
         foreach($extra as $name => $value) {
-            if (null === $value || is_scalar($value)) {
-                $this->_extraFields[$name] = new <?php echo $types->getTypeByName(PHPFHIR_EXTRA_PRIMITVE_TYPE)->getClassName(); ?>($name, $value);
+            if (null === $value) {
+                continue;
+            }
+            if (is_scalar($value)) {
+                $this->_extraFields[$name] = new <?php echo $extraPrimitiveClassname; ?>($name, $value);
             } else {
-                $this->_extraFields[$name] = new <?php echo $types->getTypeByName(PHPFHIR_EXTRA_COMPLEX_TYPE)->getClassName(); ?>($name, $value);
+                $this->_extraFields[$name] = <?php echo $extraComplexClassname; ?>::fromArray($name, $value);
             }
         }
     }
 
     protected function _parseExtraFieldsFromXmlElement(\SimpleXMLElement $sxe): void
     {
+        foreach($sxe->attributes() as $k => $v) {
+            $this->_
+        }
     }
 }
 <?php return ob_get_clean();

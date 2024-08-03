@@ -53,23 +53,57 @@ echo require_with(
  */
 final class <?php echo $type->getClassName(); ?> implements \JsonSerializable
 {
-    public string $name;
-    public null|string|bool|int|float $value;
+    private const _NUMRE = '/^[0-9,.-]+$/';
+
+    private string $_name;
+    private null|string|bool|int|float $_value = null;
+
+    private bool $_commas = false;
+    private int $_decimals = 0;
 
     public function __construct(string $name, null|string|bool|int|float $value = null)
     {
-        $this->name = $name;
-        $this->value = $value;
+        $this->_name = $name;
+        $this->setValue($value);
     }
 
     public function getName(): string
     {
-        return $this->name;
+        return $this->_name;
     }
 
     public function getValue(): null|string|bool|int|float
     {
-        return $this->value;
+        return $this->_value;
+    }
+
+    public function setValue(null|string|bool|int|float $value): self
+    {
+        if (!is_string($value)) {
+            $this->_value = $value;
+            return $this;
+        }
+        if (($l = strtolower($value)) && (<?php echo PHPFHIR_CLASSNAME_CONSTANTS; ?>::STRING_TRUE === $l || <?php echo PHPFHIR_CLASSNAME_CONSTANTS; ?>::STRING_FALSE === $l)) {
+            $this->_value = $l === <?php echo PHPFHIR_CLASSNAME_CONSTANTS; ?>::STRING_TRUE;
+            return $this;
+        }
+        if (!preg_match(self::_NUMRE, $value)) {
+            $this->_value = $value;
+            return $this;
+        }
+        if ($this->_commas = str_contains($value, ',')) {
+            $value = str_replace(',', '', $value);
+        }
+        $dec = strstr($value, '.');
+        if (false === $dec) {
+            $this->_decimals = 0;
+            $this->_value = intval($value);
+        } else {
+            $this->_decimals = strlen($dec) - 1;
+            $this->_value = floatval($value);
+        }
+
+        return $this;
     }
 
     /**
@@ -77,7 +111,28 @@ final class <?php echo $type->getClassName(); ?> implements \JsonSerializable
      */
     public function jsonSerialize(): mixed
     {
-        return $this->value;
+        return $this->_value;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFormattedValue(): string
+    {
+        $v = $this->getValue();
+        if (null === $v || is_string($v)) {
+            return $v;
+        }
+        if (is_bool($v)) {
+            return $v ? <?php echo PHPFHIR_CLASSNAME_CONSTANTS; ?>::STRING_TRUE : <?php echo PHPFHIR_CLASSNAME_CONSTANTS; ?>::STRING_FALSE;
+        }
+        if (is_float($v)) {
+            return number_format($v, $this->_decimals, '.', $this->_commas ? ',' : '');
+        }
+        if ($this->_commas) {
+            return strrev(wordwrap(strrev((string)$v), 3, ',', true));
+        }
+        return (string)$v;
     }
 
     /**

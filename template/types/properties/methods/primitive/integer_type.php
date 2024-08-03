@@ -44,15 +44,10 @@ ob_start(); ?>
             if ('' === $value) {
                 $value = '0';
             }
-            $neg = 1;
-            if ('-' === $value[0]) {
-                $neg = -1;
-                $value = substr($value, 1);
-            }
             if ($this->_commas = str_contains($value, ',')) {
                 $value = str_replace(',', '', $value);
             }
-            $value = $neg * intval($value);
+            $value = intval($value);
         }
         $this->value = $value;
         return $this;
@@ -70,5 +65,6 @@ ob_start(); ?>
         if ($this->_commas) {
             return strrev(wordwrap(strrev((string)$v), 3, ',', true));
         }
-        return (string)$v;    }
+        return (string)$v;
+    }
 <?php return ob_get_clean();
