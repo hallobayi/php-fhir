@@ -63,16 +63,4 @@ ob_start(); ?>
         if (null !== ($ns = $element->getNamespaces()[''] ?? null)) {
             $type->_setSourceXmlns((string)$ns);
         }
-
-        return self::_doXmlUnserialize($element, $type, $config, true);
-    }
-
-    /**
-     * @param \SimpleXMLElement $element
-     * @param <?php echo $type->getFullyQualifiedClassName(true); ?> $type
-     * @param <?php echo $config->getFullyQualifiedName(true, PHPFHIR_CLASSNAME_CONFIG); ?> $config
-     * @return static
-     */
-    protected static function _doXmlUnserialize(null|string|\SimpleXMLElement $element, null|<?php echo PHPFHIR_INTERFACE_TYPE; ?> $type, <?php echo PHPFHIR_CLASSNAME_CONFIG ?> $config, bool $parseExtra): static
-    {
 <?php return ob_get_clean();

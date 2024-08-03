@@ -24,7 +24,6 @@ use DCarbone\PHPFHIR\Definition\Type;
 use DCarbone\PHPFHIR\Definition\Types;
 use DCarbone\PHPFHIR\Enum\ElementName;
 use DCarbone\PHPFHIR\Utilities\ExceptionUtils;
-use SimpleXMLElement;
 
 /**
  * Class ComplexContentElementTypeDecorator
@@ -42,7 +41,7 @@ abstract class ComplexContentElementTypeDecorator
         VersionConfig $config,
         Types $types,
         Type $type,
-        SimpleXMLElement $complexContent
+        \SimpleXMLElement $complexContent
     ): void {
         // parse through attributes
         foreach ($complexContent->attributes() as $attribute) {

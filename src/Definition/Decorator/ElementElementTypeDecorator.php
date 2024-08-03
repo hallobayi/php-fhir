@@ -25,7 +25,6 @@ use DCarbone\PHPFHIR\Definition\Types;
 use DCarbone\PHPFHIR\Enum\AttributeName;
 use DCarbone\PHPFHIR\Enum\ElementName;
 use DCarbone\PHPFHIR\Utilities\ExceptionUtils;
-use SimpleXMLElement;
 
 /**
  * Class ElementElementTypeDecorator
@@ -41,7 +40,7 @@ class ElementElementTypeDecorator
      * @param \DCarbone\PHPFHIR\Definition\Type $type
      * @param \SimpleXMLElement $element
      */
-    public static function rootDecorate(VersionConfig $config, Types $types, Type $type, SimpleXMLElement $element): void
+    public static function rootDecorate(VersionConfig $config, Types $types, Type $type, \SimpleXMLElement $element): void
     {
         foreach ($element->attributes() as $attribute) {
             switch ($attribute->getName()) {
@@ -99,7 +98,7 @@ class ElementElementTypeDecorator
      * @param \DCarbone\PHPFHIR\Definition\Type $type
      * @param \SimpleXMLElement $element
      */
-    public static function decorate(VersionConfig $config, Types $types, Type $type, SimpleXMLElement $element): void
+    public static function decorate(VersionConfig $config, Types $types, Type $type, \SimpleXMLElement $element): void
     {
         $property = new Property($type, $element, $type->getSourceFilename());
 

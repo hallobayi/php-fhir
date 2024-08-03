@@ -38,7 +38,6 @@ echo require_with(
     [
         'config' => $config,
         'fqns' => $fqns,
-        'skipImports' => false,
         'type' => $type,
         'types' => $types,
     ]

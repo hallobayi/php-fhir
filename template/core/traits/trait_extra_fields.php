@@ -87,5 +87,9 @@ trait <?php echo PHPFHIR_TRAIT_EXTRA_FIELDS; ?>
             }
         }
     }
+
+    protected function _parseExtraFieldsFromXmlElement(\SimpleXMLElement $sxe): void
+    {
+    }
 }
 <?php return ob_get_clean();

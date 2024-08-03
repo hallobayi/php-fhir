@@ -18,15 +18,14 @@ namespace DCarbone\PHPFHIR\Definition;
  * limitations under the License.
  */
 
-use Countable;
 use DCarbone\PHPFHIR\Enum\TypeKind;
-use Iterator;
+use DCarbone\PHPFHIR\Utilities\NameUtils;
 
 /**
  * Class TypeImports
  * @package DCarbone\PHPFHIR\Definition
  */
-class TypeImports implements Iterator, Countable
+class TypeImports implements \Countable
 {
     /** @var \DCarbone\PHPFHIR\Definition\Type */
     private Type $type;
@@ -46,46 +45,15 @@ class TypeImports implements Iterator, Countable
     }
 
     /**
-     * @return \DCarbone\PHPFHIR\Definition\TypeImport[]
-     */
-    public function getImportMap(): array
-    {
-        if (!$this->parsed) {
-            $this->buildImports();
-        }
-        return $this->imports;
-    }
-
-    /**
      * @param \DCarbone\PHPFHIR\Definition\Type $type
      * @return \DCarbone\PHPFHIR\Definition\TypeImport|null
      */
     public function getImportByType(Type $type): ?TypeImport
     {
-        if (!$this->parsed) {
-            $this->buildImports();
-        }
+        $this->buildImports();
         $fqn = $type->getFullyQualifiedClassName(false);
         foreach ($this->imports as $import) {
             if ($import->getFullyQualifiedClassname(false) === $fqn) {
-                return $import;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * @param string $classname
-     * @param string $namespace
-     * @return \DCarbone\PHPFHIR\Definition\TypeImport|null
-     */
-    public function getImportByClassAndNamespace(string $classname, string $namespace): ?TypeImport
-    {
-        if (!$this->parsed) {
-            $this->buildImports();
-        }
-        foreach ($this->imports as $import) {
-            if ($import->getNamespace() === $namespace && $import->getClassname() === $classname) {
                 return $import;
             }
         }
@@ -98,59 +66,17 @@ class TypeImports implements Iterator, Countable
      */
     public function getImportByAlias(string $aliasName): ?TypeImport
     {
-        if (!$this->parsed) {
-            $this->buildImports();
-        }
+        $this->buildImports();
         return $this->imports[$aliasName] ?? null;
     }
 
     /**
-     * @return \DCarbone\PHPFHIR\Definition\TypeImport
+     * @return \DCarbone\PHPFHIR\Definition\TypeImport[]
      */
-    public function current(): TypeImport
+    public function getIterator(): \Traversable
     {
-        if (!$this->parsed) {
-            $this->buildImports();
-        }
-        return current($this->imports);
-    }
-
-    public function next(): void
-    {
-        if (!$this->parsed) {
-            $this->buildImports();
-        }
-        next($this->imports);
-    }
-
-    /**
-     * @return string|null
-     */
-    public function key(): ?string
-    {
-        if (!$this->parsed) {
-            $this->buildImports();
-        }
-        return key($this->imports);
-    }
-
-    /**
-     * @return bool
-     */
-    public function valid(): bool
-    {
-        if (!$this->parsed) {
-            $this->buildImports();
-        }
-        return null !== key($this->imports);
-    }
-
-    public function rewind(): void
-    {
-        if (!$this->parsed) {
-            $this->buildImports();
-        }
-        reset($this->imports);
+        $this->buildImports();
+        return new \ArrayIterator($this->imports);
     }
 
     /**
@@ -168,10 +94,9 @@ class TypeImports implements Iterator, Countable
      * TODO: come up with better alias scheme...
      *
      * @param string $classname
-     * @param string $namespace
      * @return string
      */
-    private function findNextAliasName(string $classname, string $namespace): string
+    private function findNextAliasName(string $classname): string
     {
         $i = 1;
         $aliasName = "{$classname}{$i}";
@@ -195,7 +120,7 @@ class TypeImports implements Iterator, Countable
             }
 
             // if there is a conflicting imported type here...
-            $aliasName = $this->findNextAliasName($classname, $namespace);
+            $aliasName = $this->findNextAliasName($classname);
             $this->imports[$aliasName] = new TypeImport($classname, $namespace, true, $aliasName, $requiresImport);
             return;
         }
@@ -203,7 +128,7 @@ class TypeImports implements Iterator, Countable
         if ($classname === $this->type->getClassName() &&
             $namespace !== $this->type->getFullyQualifiedNamespace(false)) {
             // if the imported type has the same class name as the direct type, but a different namespace
-            $aliasName = $this->findNextAliasName($classname, $namespace);
+            $aliasName = $this->findNextAliasName($classname);
             $this->imports[$aliasName] = new TypeImport($classname, $namespace, true, $aliasName, $requiresImport);
             return;
         }
@@ -214,46 +139,53 @@ class TypeImports implements Iterator, Countable
 
     private function buildImports(): void
     {
-        // immediately set to true so we don't recurse ourselves to death.
+        // safety dance
+        if ($this->parsed) {
+            return;
+        }
+
+        // immediately set to true so we don't repeat ourselves to death.
         $this->parsed = true;
 
         // immediately add self
         $this->addImport($this->type->getClassName(), $this->type->getFullyQualifiedNamespace(false));
 
         $typeNS = $this->type->getFullyQualifiedNamespace(false);
-        $configNS = $this->type->getConfig()->getFullyQualifiedName(false);
+        $rootNS = $this->type->getConfig()->getFullyQualifiedName(false);
 
         $sortedProperties = $this->type->getAllPropertiesIterator();
 
-        // non-abstract types must import config and xml writer
+        // non-abstract types must import some basics
         if (!$this->type->isAbstract()) {
-            $this->addImport(PHPFHIR_CLASSNAME_CONFIG, $configNS);
-            $this->addImport(PHPFHIR_CLASSNAME_XML_WRITER, $configNS);
-            $this->addImport(PHPFHIR_ENUM_CONFIG_KEY, $configNS);
-            $this->addImport(PHPFHIR_ENUM_XML_LOCATION_ENUM, $configNS);
+            $this->addImport(PHPFHIR_CLASSNAME_CONFIG, $rootNS);
+            $this->addImport(PHPFHIR_CLASSNAME_XML_WRITER, $rootNS);
+            $this->addImport(PHPFHIR_ENUM_CONFIG_KEY, $rootNS);
+            $this->addImport(PHPFHIR_ENUM_XML_LOCATION_ENUM, $rootNS);
+
+            $this->addImport(NameUtils::getTypeClassName(PHPFHIR_EXTRA_PRIMITVE_TYPE), $rootNS);
+            $this->addImport(NameUtils::getTypeClassName(PHPFHIR_EXTRA_COMPLEX_TYPE), $rootNS);
         }
 
         // if this type is in a nested namespace, there are  a few base interfaces, classes, and traits
         // that may need to be imported to ensure function
-        if ($typeNS !== $configNS) {
+        if ($typeNS !== $rootNS) {
             // always add the base interface type as its used by the xml serialization func
-            $this->addImport(PHPFHIR_INTERFACE_TYPE, $configNS);
+            $this->addImport(PHPFHIR_INTERFACE_TYPE, $rootNS);
             // always add the constants class as its used everywhere.
-            $this->addImport(PHPFHIR_CLASSNAME_CONSTANTS, $configNS);
+            $this->addImport(PHPFHIR_CLASSNAME_CONSTANTS, $rootNS);
             // add directly implemented interfaces
             foreach ($this->type->getDirectlyImplementedInterfaces() as $interface) {
-                $this->addImport($interface, $configNS);
+                $this->addImport($interface, $rootNS);
             }
             // add directly implemented traits
             foreach ($this->type->getDirectlyUsedTraits() as $trait) {
-                $this->addImport($trait, $configNS);
+                $this->addImport($trait, $rootNS);
             }
         }
 
         // determine if we need to import our parent type
         if ($parentType = $this->type->getParentType()) {
-            $pns = $parentType->getFullyQualifiedNamespace(false);
-            $this->addImport($parentType->getClassName(), $pns);
+            $this->addImport($parentType->getClassName(), $parentType->getFullyQualifiedNamespace(false));
         }
 
         // determine if we need to import a restriction base
@@ -272,9 +204,9 @@ class TypeImports implements Iterator, Countable
             $ptk = $propertyType->getKind();
 
             if ($ptk->isOneOf(TypeKind::RESOURCE_CONTAINER, TypeKind::RESOURCE_INLINE) &&
-                $typeNS !== $configNS) {
-                $this->addImport(PHPFHIR_INTERFACE_CONTAINED_TYPE, $configNS);
-                $this->addImport(PHPFHIR_CLASSNAME_TYPEMAP, $configNS);
+                $typeNS !== $rootNS) {
+                $this->addImport(PHPFHIR_INTERFACE_CONTAINED_TYPE, $rootNS);
+                $this->addImport(PHPFHIR_CLASSNAME_TYPEMAP, $rootNS);
             } else {
 
                 if ($ptk === TypeKind::PRIMITIVE_CONTAINER) {

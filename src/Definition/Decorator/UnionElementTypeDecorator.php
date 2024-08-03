@@ -24,8 +24,6 @@ use DCarbone\PHPFHIR\Definition\Types;
 use DCarbone\PHPFHIR\Enum\AttributeName;
 use DCarbone\PHPFHIR\Enum\ElementName;
 use DCarbone\PHPFHIR\Utilities\ExceptionUtils;
-use DCarbone\PHPFHIR\Utilities\TypeBuilderUtils;
-use SimpleXMLElement;
 
 /**
  * Class UnionElementTypeDecorator
@@ -39,12 +37,14 @@ abstract class UnionElementTypeDecorator
      * @param \DCarbone\PHPFHIR\Definition\Type $type
      * @param \SimpleXMLElement $union
      */
-    public static function decorate(VersionConfig $config, Types $types, Type $type, SimpleXMLElement $union): void
+    public static function decorate(VersionConfig $config, Types $types, Type $type, \SimpleXMLElement $union): void
     {
         foreach ($union->attributes() as $attribute) {
             switch ($attribute->getName()) {
                 case AttributeName::MEMBER_TYPES->value:
-                    TypeBuilderUtils::setTypeArrayFromAttribute($type, $union, $attribute, 'setUnionOf');
+                    $type->setUnionOf(
+                        array_filter(array_map('trim', explode(' ', (string)$attribute)))
+                    );
                     break;
 
                 default:

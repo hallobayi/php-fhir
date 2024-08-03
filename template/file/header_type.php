@@ -21,7 +21,6 @@ use DCarbone\PHPFHIR\Utilities\CopyrightUtils;
 /** @var \DCarbone\PHPFHIR\Config\VersionConfig $config */
 /** @var \DCarbone\PHPFHIR\Definition\Types $types */
 /** @var \DCarbone\PHPFHIR\Definition\Type $type */
-/** @var bool $skipImports */
 /** @var string $fqns */
 
 // determine if we need to declare a namespace
@@ -43,17 +42,15 @@ echo CopyrightUtils::getFullPHPFHIRCopyrightComment();
 // formatting!
 echo "\n\n";
 
-if (!isset($skipImports) || !$skipImports) {
-    $imported = 0;
-    foreach ($type->getImports() as $import) {
-        if ($import->isRequiresImport()) {
-            echo $import->getUseStatement();
-            $imported++;
-        }
+$imported = 0;
+foreach ($type->getImports()->getIterator() as $import) {
+    if ($import->isRequiresImport()) {
+        echo $import->getUseStatement();
+        $imported++;
     }
-    if (0 !== $imported) {
-        echo "\n";
-    }
+}
+if ($imported > 0) {
+    echo "\n";
 }
 
 return ob_get_clean();

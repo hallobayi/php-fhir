@@ -43,8 +43,9 @@ ob_start(); ?>
             ]
         );
     }
-}; ?>
-
+}; ?> else {
+                $type->_parseExtraFieldsFromXmlElement($n);
+            }
         }
         $attributes = $element->attributes();
 <?php foreach ($properties as $i => $property) {

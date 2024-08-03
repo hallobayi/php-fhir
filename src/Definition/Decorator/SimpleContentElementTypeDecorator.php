@@ -23,7 +23,6 @@ use DCarbone\PHPFHIR\Definition\Type;
 use DCarbone\PHPFHIR\Definition\Types;
 use DCarbone\PHPFHIR\Enum\ElementName;
 use DCarbone\PHPFHIR\Utilities\ExceptionUtils;
-use SimpleXMLElement;
 
 /**
  * Class SimpleContentElementTypeDecorator
@@ -37,7 +36,7 @@ abstract class SimpleContentElementTypeDecorator
      * @param \DCarbone\PHPFHIR\Definition\Type $type
      * @param \SimpleXMLElement $simpleContent
      */
-    public static function decorate(VersionConfig $config, Types $types, Type $type, SimpleXMLElement $simpleContent): void
+    public static function decorate(VersionConfig $config, Types $types, Type $type, \SimpleXMLElement $simpleContent): void
     {
         foreach ($simpleContent->attributes() as $attribute) {
             switch ($attribute->getName()) {

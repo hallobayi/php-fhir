@@ -23,14 +23,7 @@ use DCarbone\PHPFHIR\Enum\PrimitiveType;
 use DCarbone\PHPFHIR\Enum\TestType;
 use DCarbone\PHPFHIR\Enum\TypeKind;
 use DCarbone\PHPFHIR\Utilities\NameUtils;
-use DomainException;
-use LogicException;
-use SimpleXMLElement;
 
-/**
- * Class Type
- * @package DCarbone\PHPFHIR\Definition
- */
 class Type
 {
     use DocumentationTrait;
@@ -104,14 +97,9 @@ class Type
      * @param \SimpleXMLElement|null $sourceSXE
      * @param string $sourceFilename
      */
-    public function __construct(
-        VersionConfig $config,
-        string $fhirName,
-        SimpleXMLElement $sourceSXE = null,
-        string $sourceFilename = ''
-    ) {
+    public function __construct(VersionConfig $config, string $fhirName, \SimpleXMLElement $sourceSXE = null, string $sourceFilename = '') {
         if ('' === ($fhirName = trim($fhirName))) {
-            throw new DomainException('$fhirName must be defined');
+            throw new \DomainException('$fhirName must be defined');
         }
         $this->config = $config;
         $this->fhirName = $fhirName;
@@ -205,7 +193,7 @@ class Type
     public function setKind(TypeKind $kind): Type
     {
         if (isset($this->kind) && $this->kind !== $kind) {
-            throw new LogicException(
+            throw new \LogicException(
                 sprintf(
                     'Cannot overwrite Type % s Kind from %s to %s',
                     $this->getFHIRName(),
@@ -225,7 +213,7 @@ class Type
     public function setPrimitiveType(PrimitiveType $primitiveType): Type
     {
         if (isset($this->primitiveType) && $this->primitiveType === $primitiveType) {
-            throw new LogicException(
+            throw new \LogicException(
                 sprintf(
                     'Cannot overwrite Type "%s" PrimitiveType from "%s" to "%s"',
                     $this->getFHIRName(),

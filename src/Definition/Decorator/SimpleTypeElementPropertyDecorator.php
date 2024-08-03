@@ -25,7 +25,6 @@ use DCarbone\PHPFHIR\Definition\Property;
 use DCarbone\PHPFHIR\Definition\Type;
 use DCarbone\PHPFHIR\Definition\Types;
 use DCarbone\PHPFHIR\Utilities\ExceptionUtils;
-use SimpleXMLElement;
 
 /**
  * Class SimpleTypeElementPropertyDecorator
@@ -45,7 +44,7 @@ abstract class SimpleTypeElementPropertyDecorator
         Types $types,
         Type $type,
         Property $property,
-        SimpleXMLElement $simpleType
+        \SimpleXMLElement $simpleType
     ): void {
         // parse through attributes
         foreach ($simpleType->attributes() as $attribute) {

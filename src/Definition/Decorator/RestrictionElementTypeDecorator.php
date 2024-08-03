@@ -19,13 +19,12 @@ namespace DCarbone\PHPFHIR\Definition\Decorator;
  */
 
 use DCarbone\PHPFHIR\Config\VersionConfig;
+use DCarbone\PHPFHIR\Definition\EnumerationValue;
 use DCarbone\PHPFHIR\Definition\Type;
 use DCarbone\PHPFHIR\Definition\Types;
 use DCarbone\PHPFHIR\Enum\AttributeName;
 use DCarbone\PHPFHIR\Enum\ElementName;
 use DCarbone\PHPFHIR\Utilities\ExceptionUtils;
-use DCarbone\PHPFHIR\Utilities\TypeBuilderUtils;
-use SimpleXMLElement;
 
 /**
  * Class RestrictionElementTypeDecorator
@@ -39,7 +38,7 @@ abstract class RestrictionElementTypeDecorator
      * @param \DCarbone\PHPFHIR\Definition\Type $type
      * @param \SimpleXMLElement $restriction
      */
-    public static function decorate(VersionConfig $config, Types $types, Type $type, SimpleXMLElement $restriction): void
+    public static function decorate(VersionConfig $config, Types $types, Type $type, \SimpleXMLElement $restriction): void
     {
         foreach ($restriction->attributes() as $attribute) {
             switch ($attribute->getName()) {
@@ -58,14 +57,16 @@ abstract class RestrictionElementTypeDecorator
                     SimpleTypeElementTypeDecorator::decorate($config, $types, $type, $child);
                     break;
                 case ElementName::PATTERN->value:
-                    TypeBuilderUtils::setTypeStringFromElementAttribute($type, $child, 'setPattern');
+                    $type->setPattern((string)$child->attributes()->pattern);
                     break;
                 case ElementName::MIN_LENGTH->value:
+                    $type->setMinLength((int)$child->attributes()->minLength);
+                    break;
                 case ElementName::MAX_LENGTH->value:
-                    TypeBuilderUtils::setTypeIntegerFromElementAttribute($type, $child, 'set' . $child->getName());
+                    $type->setMaxLength((int)$child->attributes()->maxLength);
                     break;
                 case ElementName::ENUMERATION->value:
-                    TypeBuilderUtils::addTypeEnumeratedValue($type, $restriction, $child);
+                    $type->addEnumerationValue(new EnumerationValue((string)$child->attributes()->enumeration, $child));
                     break;
                 case ElementName::SEQUENCE->value:
                     SequenceElementTypeDecorator::decorate($config, $types, $type, $child);
