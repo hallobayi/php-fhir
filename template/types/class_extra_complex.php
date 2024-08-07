@@ -16,8 +16,6 @@
  * limitations under the License.
  */
 
-use DCarbone\PHPFHIR\Utilities\NameUtils;
-
 /** @var \DCarbone\PHPFHIR\Config\VersionConfig $config */
 /** @var \DCarbone\PHPFHIR\Definition\Types $types */
 /** @var \DCarbone\PHPFHIR\Definition\Type $type */
@@ -90,9 +88,12 @@ final class <?php echo $type->getClassName(); ?> implements \JsonSerializable
         return $this->_attributes;
     }
 
-    public function addAttribute(string $k, null|string|bool|int|float $v): self
+    public function addAttribute(string $k, null|string|bool|int|float|<?php echo $extraPrimitiveClassname; ?> $v): self
     {
-        $this->_attributes[$k] = new <?php echo $extraPrimitiveClassname; ?>($k, $v);
+        if (!($v instanceof <?php echo $extraPrimitiveClassname; ?>)) {
+            $v = new <?php echo $extraPrimitiveClassname; ?>($k, $v);
+        }
+        $this->_attributes[$k] = $v;
         return $this;
     }
 
@@ -111,7 +112,9 @@ final class <?php echo $type->getClassName(); ?> implements \JsonSerializable
             $child = (array)$child;
         }
         foreach($child as $field => $value) {
-            if (is_scalar($value)) {
+            if ($value instanceof <?php echo $extraPrimitiveClassname; ?> || $value instanceof <?php echo $type->getClassName(); ?>) {
+                $this->_children[$field] = $value;
+            } elseif (is_scalar($value)) {
                 $this->_children[$field] = new <?php echo $extraPrimitiveClassname; ?>($field, $value);
             } else {
                 if ($value instanceof \stdClass) {

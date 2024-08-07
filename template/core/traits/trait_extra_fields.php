@@ -48,20 +48,26 @@ echo "\n\n";
 trait <?php echo PHPFHIR_TRAIT_EXTRA_FIELDS; ?>
 
 {
-    /** @var array */
-    private array $_extraFields = [];
+    private array $_extraAttributes = [];
+    private array $_extraChildren = [];
 
     public function _hasExtraFields(): bool
     {
-        return [] !== $this->_extraFields;
+        return [] !== $this->_extraAttributes || [] !== $this->_extraChildren;
     }
 
-    public function _setExtraField(string $name, <?php echo $extraPrimitiveClassname; ?>|<?php echo $extraComplexClassname; ?> $field): void
+    public function _addExtraAttribute(string $name, <?php echo $extraPrimitiveClassname; ?> $attr): void
     {
-        $this->_extraFields[$name] = $field;
+        $this->_extraAttributes[$name] = $attr;
     }
 
-    public function _getExtraField(string $name): <?php echo $extraPrimitiveClassname; ?>|<?php echo $extraComplexClassname; ?>
+    public function _addExtraChild(string $name, <?php echo $extraPrimitiveClassname; ?>|<?php echo $extraComplexClassname; ?> $child): void
+    {
+        $this->_extraChildren($name, $child);
+    }
+
+    public function _getExtraField(string $name): null|<?php echo $extraPrimitiveClassname; ?>|<?php echo $extraComplexClassname; ?>
+
     {
         if (array_key_exists($name, $this->_extraFields)) {
             return $this->_extraFields[$name];
@@ -94,7 +100,7 @@ trait <?php echo PHPFHIR_TRAIT_EXTRA_FIELDS; ?>
         }
     }
 
-    protected function _parseExtraFieldsFromXmlElement(\SimpleXMLElement $sxe): void
+    protected function _parseExtraFieldsFromXml(\SimpleXMLElement $sxe): void
     {
         foreach($sxe->attributes() as $k => $v) {
             $this->_
