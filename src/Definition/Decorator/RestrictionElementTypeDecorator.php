@@ -66,7 +66,7 @@ abstract class RestrictionElementTypeDecorator
                     $type->setMaxLength((int)$child->attributes()->maxLength);
                     break;
                 case ElementName::ENUMERATION->value:
-                    $type->addEnumerationValue(new EnumerationValue((string)$child->attributes()->enumeration, $child));
+                    $type->addEnumerationValue(new EnumerationValue((string)$child->attributes()->value, $child));
                     break;
                 case ElementName::SEQUENCE->value:
                     SequenceElementTypeDecorator::decorate($config, $types, $type, $child);
